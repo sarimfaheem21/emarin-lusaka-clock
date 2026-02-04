@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lusaka Live Clock - EMARIN Field Operations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #0A1A1F;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .clock-container {
+            text-align: center;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #0F2128 0%, #1A3540 100%);
+            border: 2px solid #00D9FF;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+        }
+        
+        .location {
+            font-size: 14px;
+            color: #B0BEC5;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .time {
+            font-size: 48px;
+            font-weight: bold;
+            color: #00D9FF;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .date {
+            font-size: 16px;
+            color: #FFFFFF;
+            margin-top: 8px;
+            font-weight: 400;
+        }
+        
+        .timezone {
+            font-size: 12px;
+            color: #00D9FF;
+            margin-top: 5px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+        }
+        
+        .pulse {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #00D9FF;
+            border-radius: 50%;
+            margin-left: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                box-shadow: 0 0 5px #00D9FF;
+            }
+            50% {
+                opacity: 0.4;
+                box-shadow: 0 0 15px #00D9FF;
+            }
+        }
+        
+        /* Compact version for embedding */
+        @media (max-width: 600px) {
+            .time {
+                font-size: 32px;
+            }
+            .date {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div class="location">LUSAKA, ZAMBIA<span class="pulse"></span></div>
+        <div class="time" id="clock">--:--:--</div>
+        <div class="date" id="date">Loading...</div>
+        <div class="timezone">CAT (UTC+2)</div>
+    </div>
+
+    <script>
+        function updateClock() {
+            // Get current UTC time
+            const now = new Date();
+            
+            // Convert to Lusaka time (CAT = UTC+2)
+            const utcOffset = now.getTimezoneOffset() * 60000;
+            const utcTime = now.getTime() + utcOffset;
+            const lusakaTime = new Date(utcTime + (3600000 * 2));
+            
+            // Format time components
+            const hours = String(lusakaTime.getHours()).padStart(2, '0');
+            const minutes = String(lusakaTime.getMinutes()).padStart(2, '0');
+            const seconds = String(lusakaTime.getSeconds()).padStart(2, '0');
+            
+            // Day and month names
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                               'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            // Get date components
+            const dayName = dayNames[lusakaTime.getDay()];
+            const day = lusakaTime.getDate();
+            const month = monthNames[lusakaTime.getMonth()];
+            const year = lusakaTime.getFullYear();
+            
+            // Update DOM
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+            document.getElementById('date').textContent = `${dayName}, ${day} ${month} ${year}`;
+        }
+        
+        // Initialize clock
+        updateClock();
+        
+        // Update every second
+        setInterval(updateClock, 1000);
+        
+        // Prevent right-click and text selection for cleaner embed
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('selectstart', e => e.preventDefault());
+    </script>
+</body>
+</html>
